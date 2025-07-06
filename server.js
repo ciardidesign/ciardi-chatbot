@@ -1,13 +1,13 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs');
-const { OpenAI } = require("openai");
+const { OpenAI } = require('openai');
 
 const app = express();
 app.use(bodyParser.json());
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
 // Carica la knowledge base
@@ -26,14 +26,14 @@ app.post('/chat', async (req, res) => {
 
   try {
     const completion = await openai.chat.completions.create({
-      model: "gpt-4",
-      messages: [{ role: "user", content: prompt }],
+      model: 'gpt-3.5-turbo',
+      messages: [{ role: 'user', content: prompt }],
     });
 
     res.json({ reply: completion.choices[0].message.content });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ reply: "Errore nel chatbot." });
+    res.status(500).json({ reply: 'Errore nel chatbot.' });
   }
 });
 
