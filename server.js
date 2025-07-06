@@ -1,15 +1,14 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs');
-const { Configuration, OpenAIApi } = require('openai');
+const { OpenAI } = require("openai");
 
 const app = express();
 app.use(bodyParser.json());
 
-const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
 });
-const openai = new OpenAIApi(configuration);
 
 // Carica la knowledge base
 const knowledge = JSON.parse(fs.readFileSync('knowledge.json', 'utf8'));
@@ -26,15 +25,15 @@ app.post('/chat', async (req, res) => {
     : `Agisci come chatbot di Ciardi Design. Rispondi alla seguente domanda: ${userMessage}`;
 
   try {
-    const completion = await openai.createChatCompletion({
-      model: 'gpt-4',
-      messages: [{ role: 'user', content: prompt }],
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4",
+      messages: [{ role: "user", content: prompt }],
     });
 
-    res.json({ reply: completion.data.choices[0].message.content });
+    res.json({ reply: completion.choices[0].message.content });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ reply: "Errore durante la generazione della risposta." });
+    res.status(500).json({ reply: "Errore nel chatbot." });
   }
 });
 
